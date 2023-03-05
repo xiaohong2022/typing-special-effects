@@ -1,6 +1,12 @@
 <meta charset="UTF-8">
-<textarea placeholder="输入汉字"></textarea><br>
+<title>打字特效模拟器</title>
+<h2>打字特效模拟器</h2>
+<textarea placeholder="输入汉字"></textarea>
+<br><br>
 <button>开始打字</button>
+<br><br>
+<label><input type="checkbox">自动滚动（开启后将不能滚动页面）</label>
+<label><input type="checkbox" checked>自动换行</label>
 <br><br>
 <div>
     <span></span>
@@ -10,6 +16,14 @@
 <style>
     o {
         text-decoration: underline;
+    }
+</style>
+<style>
+    span {
+        width: 100%;
+        word-break: normal;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap !important;
     }
 </style>
 <script>
@@ -30,14 +44,35 @@
             }, 1100);
             return function () { clearInterval(x); }
         }
+        document.querySelectorAll("input")[1].addEventListener("change", function () {
+            if (this.checked) {
+                document.querySelectorAll("style")[1].innerHTML = `span {
+                width: 100%;
+                word-break: normal;
+                overflow-wrap: anywhere;
+                white-space: pre-wrap!important;
+            }`
+            } else {
+                document.querySelectorAll("style")[1].innerHTML = ``
+            }
+        })
         document.querySelector("button").addEventListener("click", function () {
             document.querySelector("button").disabled = true;
             document.querySelector("textarea").disabled = true;
+            document.querySelector("input").disabled = true;
             document.querySelector("button").innerText = "打字中...";
             document.querySelector("span").innerHTML = "";
 
             var t3 = document.querySelector("textarea").value.split("").map(v => texts.find(s => s[0] === v) || [v, v]);
             var t4 = open();
+
+
+            var t1 = setInterval(() => {
+                if (document.querySelector("input").checked) {
+                    document.body.scrollTop = document.body.scrollHeight;
+                    document.body.style.overflow = "hidden";
+                }
+            });
 
             !async function () {
                 await sleep(2000);
@@ -47,13 +82,18 @@
                         await sleep(40 + Math.random() * 40);
                     };
                     document.querySelector("o").innerText = "";
-                    document.querySelector("span").innerText += v[0];
+                    document.querySelector("span").innerText += v[0].split(" ").join("&nbsp;").split("\t").join("&nbsp;&nbsp;&nbsp;&nbsp;");;
+                    document.querySelector("span").innerHTML = document.querySelector("span").innerHTML.split("&amp;").join("&")
                 }
 
                 document.querySelector("button").disabled = false;
                 document.querySelector("textarea").disabled = false;
+                document.querySelector("input").disabled = false;
                 document.querySelector("button").innerText = "开始打字";
+                clearInterval(t1);
+                document.body.style.overflow = "";
                 t4();
+                document.body.scrollTop = document.body.scrollHeight;
             }();
         });
     }()
