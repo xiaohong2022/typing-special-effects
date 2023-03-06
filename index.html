@@ -79,7 +79,7 @@
                 for (let v of t3) {
                     for (let x of v[1]) {
                         document.querySelector("o").innerText += x;
-                        await sleep(40 + Math.random() * 40);
+                        await sleep(20);
                     };
                     document.querySelector("o").innerText = "";
                     document.querySelector("span").innerText += v[0].split(" ").join("&nbsp;").split("\t").join("&nbsp;&nbsp;&nbsp;&nbsp;");;
